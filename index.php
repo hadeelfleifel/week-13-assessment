@@ -1,3 +1,57 @@
+<?php  
+ session_start();  
+ $host = "localhost";  
+ $username = "root";  
+ $password = "Hadeel.0788244295";  
+ $database = "myapplication";  
+ $message = "";  
+ try  
+ {  
+      $connect = new PDO("mysql:host=$host; dbname=$database", $username, $password);  
+      $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+ 
+      if(isset($_POST["signup"])) {
+
+        if(empty($_POST["username"])  || empty($_POST["psw"])|| empty($_POST["psw-repeat"])|| empty($_POST["email"])|| empty($_POST["phone-number"]) ) {
+            $message = '<label>All fields are required</label>';  
+
+        }
+
+
+        else if ($_POST['psw'] != $_POST['repeat']) {
+            $message = '<label>Password Not Matched</label>';  
+        }
+
+
+         else {
+            $sql = "INSERT INTO users (username, password, email,phone_number)
+            VALUES ('$_POST[username]', '$_POST[psw]', '$_POST[email]', '$_POST[phone-number]')";
+            var_dump($sql);
+
+
+            $connect->exec($sql);
+
+            
+            // echo "New record created successfully";
+            $_SESSION["username"] = $_POST["username"];  
+           
+         header("location:login_success.php");  
+         }
+            
+        
+
+          }
+ 
+    }
+
+ 
+ catch(PDOException $error)  
+ {  
+      $message = $error->getMessage();  
+ }
+
+?>
+
 <html>
 <head>
     <style>
@@ -61,7 +115,11 @@
 <h1> Instructions </h1>
 <ul>
        <li>Create a database called myapplication.</li>
-       <li>Create a table called users. (Id,username,password,email,phone_number). Those fields should have the right datatype and right size.
+<!--       create database myapplication;
+ -->      
+  <li>Create a table called users. (Id,username,password,email,phone_number). Those fields should have the right datatype and right size.
+<!-- create table users (id int , username varchar(100),password varchar(100),email varchar(100),phone_number varchar(100));
+ -->
        <li>Connect the form to the database, When the user insert the information in the registration form, those information should stored in the database.</li>
        <li>After submission, the page should be redirect to new page.</li>
        <li>The new page should display, "Hello (username)" </li>
@@ -72,8 +130,8 @@
         <p>Please fill in this form to create an account.</p>
         <hr>
 
-        <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Enter Email" name="email" required>
+        <label for="username"><b>UserName</b></label>
+        <input type="text" placeholder="Enter name" name="username" required>
 
         <label for="psw"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="psw" required>
@@ -89,7 +147,7 @@
         <hr>
 
         <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-        <button type="submit" class="registerbtn">Register</button>
+        <button type="submit" class="registerbtn" name="signup">Register</button>
     </div>
 
     <div class="container signin">
